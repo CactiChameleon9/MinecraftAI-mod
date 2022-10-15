@@ -1,6 +1,6 @@
-package net.fabricmc.example.mixin;
+package com.example.minecraftAI.mixin;
 
-import net.fabricmc.example.ExampleMod;
+import com.example.minecraftAI.ExampleMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
@@ -14,10 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayerEntity.class)
 public class ExampleMixin {
 	
-	int i = 0;
-	int timesPressed = 0;
-	int targetPresses = 50;
-	
 	@Inject(at = @At("HEAD"), method = "init()V")
 	private void init(CallbackInfo info) {
 		ExampleMod.LOGGER.info("This line is printed by an example mod mixin!");
@@ -30,11 +26,13 @@ public class ExampleMixin {
 		assert player != null;
 
 
-		mc.keyboard.onKey(mc.getWindow().getHandle(), 87, 0, 2, 2);
+		mc.keyboard.onKey(mc.getWindow().getHandle(), 87, 0, 2, 0);
 	}
 
 }
 
+
+//This is a 2nd mod that prints out the keys pressed along with the action and modifiers
 
 // @Mixin(Keyboard.class)
 // public class ExampleMixin {
