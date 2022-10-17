@@ -10,6 +10,10 @@ public class ExampleMod implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("modid");
 
+
+	static int[] depth = {6};
+	public static NeuralNetwork net = new NeuralNetwork(4, 2, 1, depth);
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.

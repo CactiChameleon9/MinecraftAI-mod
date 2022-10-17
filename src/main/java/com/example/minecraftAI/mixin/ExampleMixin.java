@@ -1,6 +1,7 @@
 package com.example.minecraftAI.mixin;
 
 import com.example.minecraftAI.ExampleMod;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 public class ExampleMixin {
+
 	
 	@Inject(at = @At("HEAD"), method = "init()V")
 	private void init(CallbackInfo info) {
@@ -25,8 +27,32 @@ public class ExampleMixin {
 		ClientPlayerEntity player = mc.player;
 		assert player != null;
 
+		// int wWidth = mc.getWindow().getWidth();
+		// int wHeight = mc.getWindow().getHeight();
 
-		mc.keyboard.onKey(mc.getWindow().getHandle(), 87, 0, 2, 0);
+		// ByteBuffer bb = ByteBuffer.allocateDirect(wWidth * wHeight * 3);
+		// GL11.glReadPixels(0, 0, wWidth, wHeight, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, bb);
+
+		double[] inputs = new double[4];
+		if (player.isInSneakingPose()) {inputs[0] = 1;} else {inputs[0] = -1;}
+		if (player.isCreative()) {inputs[1] = 1;} else {inputs[1] = -1;}
+		if (player.isOnFire()) {inputs[2] = 1;} else {inputs[2] = -1;}
+		if (player.isSprinting()) {inputs[3] = 1;} else {inputs[3] = -1;}
+
+
+		double[] outputs = ExampleMod.net.runNetwork(inputs);
+		for (int i = 0; i < outputs.length; i++) {
+			ExampleMod.LOGGER.info(outputs[i] + "");
+		}
+
+		
+		if (outputs[0] > outputs[1]) {
+			mc.keyboard.onKey(mc.getWindow().getHandle(), 87, 0, 1, 0);
+			mc.keyboard.onKey(mc.getWindow().getHandle(), 65, 0, 0, 0);
+		} else {
+			mc.keyboard.onKey(mc.getWindow().getHandle(), 65, 0, 1, 0);
+			mc.keyboard.onKey(mc.getWindow().getHandle(), 87, 0, 0, 0);
+		}
 	}
 
 }
