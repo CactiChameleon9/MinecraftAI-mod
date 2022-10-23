@@ -11,8 +11,8 @@ public class ExampleMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("modid");
 
 
-	static int[] depth = {6};
-	public static NeuralNetwork net = new NeuralNetwork(4, 2, 1, depth);
+	static int[] depth = {20};
+	public static NeuralNetwork net = new NeuralNetwork(320 * 180 * 10, 2, 3, depth);
 
 	@Override
 	public void onInitialize() {

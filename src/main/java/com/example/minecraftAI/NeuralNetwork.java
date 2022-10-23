@@ -110,7 +110,7 @@ public class NeuralNetwork {
 
             // add the current node's bias and sigmoid the final new value
             total += network[layer][i][0][0];
-            total = sigmoid(total);
+            total = Math.max(0, total);
 
             // set the holding value for the current node
             network[layer][i][0][1] = total;

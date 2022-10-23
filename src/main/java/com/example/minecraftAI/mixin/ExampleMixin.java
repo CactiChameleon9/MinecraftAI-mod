@@ -5,6 +5,10 @@ import com.example.minecraftAI.ExampleMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
+import java.nio.ByteBuffer;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,20 +31,40 @@ public class ExampleMixin {
 		ClientPlayerEntity player = mc.player;
 		assert player != null;
 
-		// int wWidth = mc.getWindow().getWidth();
-		// int wHeight = mc.getWindow().getHeight();
+		int wWidth = mc.getWindow().getWidth();
+		int wHeight = mc.getWindow().getHeight();
 
 		// ByteBuffer bb = ByteBuffer.allocateDirect(wWidth * wHeight * 3);
 		// GL11.glReadPixels(0, 0, wWidth, wHeight, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, bb);
 
-		double[] inputs = new double[4];
-		if (player.isInSneakingPose()) {inputs[0] = 1;} else {inputs[0] = -1;}
-		if (player.isCreative()) {inputs[1] = 1;} else {inputs[1] = -1;}
-		if (player.isOnFire()) {inputs[2] = 1;} else {inputs[2] = -1;}
-		if (player.isSprinting()) {inputs[3] = 1;} else {inputs[3] = -1;}
+		// ExampleMod.LOGGER.info(bb.capacity() + "");
+
+		// byte[] inputs = new byte[bb.capacity()];
+		// for(int i = 0; i < bb.capacity(); i++){
+		// 	inputs[i] = bb.get(i);
+		// }
+
+		ByteBuffer buffer = BufferUtils.createByteBuffer(wWidth * wHeight * 4);
+		
+		GL11.glReadPixels(0, 0, wWidth, wHeight, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, buffer);
+	  
+		double[] inputs = new double[buffer.capacity()];
+
+		for(int i = 0; i < buffer.capacity(); i++){
+  			inputs[i] = buffer.get(i);
+		}
+		
+		double outputs[] = ExampleMod.net.runNetwork(inputs);
+	  
+
+		// double[] inputs = new double[4];
+		// if (player.isInSneakingPose()) {inputs[0] = 1;} else {inputs[0] = -1;}
+		// if (player.isCreative()) {inputs[1] = 1;} else {inputs[1] = -1;}
+		// if (player.isOnFire()) {inputs[2] = 1;} else {inputs[2] = -1;}
+		// if (player.isSprinting()) {inputs[3] = 1;} else {inputs[3] = -1;}
 
 
-		double[] outputs = ExampleMod.net.runNetwork(inputs);
+		// double[] outputs = ExampleMod.net.runNetwork(inputs);
 		for (int i = 0; i < outputs.length; i++) {
 			ExampleMod.LOGGER.info(outputs[i] + "");
 		}
